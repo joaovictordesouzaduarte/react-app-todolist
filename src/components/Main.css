@@ -65,4 +65,8 @@
 .tarefas li .delete{
   cursor: pointer;
 }
+.tarefas li span{
+  display: flex;
+  align-items: center;
+}
 

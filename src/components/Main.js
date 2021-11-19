@@ -6,11 +6,30 @@ export default class Main extends Component {
   state = {
     novaTarefa: '',
     tarefas: [],
+    index: -1,
   };
+
+  componentDidMount() {
+    const tarefas = JSON.parse(localStorage.getItem('tarefas'));
+
+    if (!tarefas) return;
+
+    this.setState({ tarefas });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { tarefas } = this.state;
+
+    if (tarefas === prevState.tarefas) return;
+
+    console.log('As tarefas mudaram', tarefas);
+
+    localStorage.setItem('tarefas', JSON.stringify(tarefas));
+  }
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const { tarefas } = this.state;
+    const { tarefas, index } = this.state;
     let { novaTarefa } = this.state;
     novaTarefa = novaTarefa.trim();
 
@@ -18,9 +37,19 @@ export default class Main extends Component {
 
     const novasTarefas = [...tarefas];
 
-    this.setState({
-      tarefas: [...novasTarefas, novaTarefa],
-    });
+    if (index === -1) {
+      this.setState({
+        tarefas: [...novasTarefas, novaTarefa],
+        novaTarefa: '',
+      });
+    } else {
+      novasTarefas[index] = novaTarefa;
+
+      this.setState({
+        tarefas: [...novasTarefas],
+        index: -1,
+      });
+    }
   }
 
   handleChange = (e) => {
@@ -40,7 +69,12 @@ export default class Main extends Component {
   }
 
   handleEdit = (e, index) => {
-    console.log('Edit', index, e);
+    const { tarefas } = this.state;
+
+    this.setState({
+      index,
+      novaTarefa: tarefas[index],
+    });
   }
 
   render() {
